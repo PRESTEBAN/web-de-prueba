@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main>
       <h1>Hola, mi primera web con Next.js 🚀</h1>
-      <p>NO QUIERO MAMAGUEVO</p>
+      <p>TITE</p>
     </main>
   );
 }
