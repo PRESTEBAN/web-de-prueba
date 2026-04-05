@@ -10,7 +10,7 @@
  */
 
 // Importamos cada sección como un componente independiente
-import ServicesHero     from "@/components/ServicesHero/ServicesHero.jsx";
+import ServicesHero     from "@/components/Page_Servicios/ServicesHero/ServicesHero.jsx";
 import FeaturedService  from "@/components/FeaturedService/FeaturedService";
 import ServiceCard      from "@/components/ServiceCard/ServiceCard";
 import ProcessSection   from "@/components/ProcessSection/ProcessSection";
