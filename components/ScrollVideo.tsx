@@ -199,6 +199,37 @@ export default function ScrollVideo() {
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
         />
  
+        {/* Fondo negro al inicio (zIndex 1) — se desvanece al scrollear */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "#0D0D0D",
+            opacity: progress < 0.08 ? 1 - progress / 0.08 : 0,
+            transition: "opacity 0.2s ease",
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Cuadrícula (zIndex 2) — siempre encima del fondo negro */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: (() => {
+              const gridOpacity = progress < 0.1
+                ? 0.03 + (1 - progress / 0.1) * 0.13
+                : 0.03;
+              return `linear-gradient(rgba(0,178,255,${gridOpacity}) 1px, transparent 1px), linear-gradient(90deg, rgba(0,178,255,${gridOpacity}) 1px, transparent 1px)`;
+            })(),
+            backgroundSize: "60px 60px",
+            pointerEvents: "none",
+            zIndex: 2,
+          }}
+        />
+
+        {/* Overlay lateral (zIndex 3) */}
         <div
           style={{
             position: "absolute",
@@ -206,20 +237,112 @@ export default function ScrollVideo() {
             background:
               "linear-gradient(to right, rgba(13,13,13,0.82) 0%, rgba(13,13,13,0.45) 55%, rgba(13,13,13,0.1) 100%)",
             pointerEvents: "none",
+            zIndex: 3,
           }}
         />
- 
+
+        {/* ── Texto de bienvenida sobre el fondo cuadriculado (fase 0) ── */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage:
-              "linear-gradient(rgba(0,178,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,178,255,0.03) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 15,
             pointerEvents: "none",
+            opacity: progress < 0.12 ? 1 - progress / 0.12 : 0,
+            transition: "opacity 0.3s ease",
           }}
-        />
- 
+        >
+          {/* Línea decorativa superior */}
+          <div style={{
+            width: "1px",
+            height: "60px",
+            background: "linear-gradient(to bottom, transparent, rgba(0,178,255,0.6))",
+            marginBottom: "2rem",
+            animation: "expandVertical 1s ease 0.2s both",
+          }} />
+
+          {/* Pregunta principal con brillo que recorre las letras */}
+          <div style={{ position: "relative", textAlign: "center", animation: "heroTextIn 1s ease 0.4s both" }}>
+            <h1
+              style={{
+                fontFamily: "'Bebas Neue', cursive",
+                fontSize: "clamp(3rem, 8vw, 7.5rem)",
+                lineHeight: 0.95,
+                color: "#F2F2F2",
+                margin: 0,
+                textAlign: "center",
+                letterSpacing: "0.04em",
+                textShadow: "0 0 80px rgba(0,178,255,0.25), 0 2px 40px rgba(0,0,0,0.8)",
+                position: "relative",
+              }}
+            >
+              ¿Listo para impulsar<br />
+              <span style={{
+                color: "transparent",
+                WebkitTextStroke: "1px rgba(0,178,255,0.7)",
+                textShadow: "0 0 40px rgba(0,178,255,0.3)",
+              }}>
+                tu emprendimiento?
+              </span>
+            </h1>
+            {/* Capa de brillo que recorre el texto */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.55) 50%, rgba(0,178,255,0.35) 55%, transparent 70%)",
+                backgroundSize: "250% 100%",
+                animation: "shineSweep 2.8s ease-in-out 1.2s infinite",
+                pointerEvents: "none",
+                mixBlendMode: "overlay",
+                borderRadius: "4px",
+              }}
+            />
+          </div>
+
+          {/* Línea separadora */}
+          <div style={{
+            width: "80px",
+            height: "2px",
+            background: "linear-gradient(to right, transparent, #00B2FF, transparent)",
+            margin: "2rem auto",
+            animation: "heroTextIn 0.8s ease 0.7s both",
+          }} />
+
+          {/* Subtexto con animación de aparición letra a letra */}
+          <p style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: "clamp(11px, 1.2vw, 13px)",
+            color: "transparent",
+            letterSpacing: "0.35em",
+            textTransform: "uppercase",
+            textAlign: "center",
+            animation: "heroTextIn 0.8s ease 0.9s both, textReveal 2.4s ease 1.1s both",
+            background: "linear-gradient(90deg, rgba(242,242,242,0.0) 0%, rgba(242,242,242,0.55) 50%, rgba(242,242,242,0.0) 100%)",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            backgroundSize: "200% 100%",
+            backgroundPosition: "200% 0",
+          }}>
+            — &nbsp; Descubre más &nbsp; —
+          </p>
+
+          {/* Flecha animada */}
+          <svg
+            width="22" height="22" viewBox="0 0 22 22" fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ marginTop: "1rem", animation: "arrowBounce 1.6s ease-in-out infinite, heroTextIn 0.8s ease 1.1s both" }}
+          >
+            <path d="M11 3 L11 19 M4 13 L11 20 L18 13"
+              stroke="#00B2FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+
         <div
           style={{
             position: "relative",
@@ -231,7 +354,7 @@ export default function ScrollVideo() {
             flexDirection: "column",
             alignItems: "flex-start",
             gap: "20px",
-            opacity: labelOpacity,
+            opacity: progress < 0.05 ? 0 : labelOpacity,
             transition: "opacity 0.3s ease",
           }}
         >
@@ -433,41 +556,67 @@ export default function ScrollVideo() {
           />
         </div>
  
-        {phase === 0 && (
-          <div
+        {/* ── Difuminación inferior ── */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "220px",
+            background: "linear-gradient(to bottom, transparent 0%, rgba(13,13,13,0.7) 50%, rgba(13,13,13,1) 100%)",
+            pointerEvents: "none",
+            zIndex: 20,
+          }}
+        />
+
+        {/* ── Flecha de scroll animada — solo visible durante la fase hero ── */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: "40px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "6px",
+            zIndex: 30,
+            opacity: progress < 0.12 ? 1 - progress / 0.12 : 0,
+            transition: "opacity 0.3s ease",
+            animation: "fadeSlideIn 1s 1.2s ease both",
+            pointerEvents: "none",
+          }}
+        >
+          <span
             style={{
-              position: "absolute",
-              bottom: "32px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "8px",
-              animation: "fadeSlideIn 1s 1s ease both",
+              fontFamily: "'Space Mono', monospace",
+              fontSize: "10px",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "rgba(242,242,242,0.35)",
             }}
           >
-            <span
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: "10px",
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                color: "rgba(242,242,242,0.2)",
-              }}
-            >
-              Scroll
-            </span>
-            <div
-              style={{
-                width: "1px",
-                height: "36px",
-                background: "linear-gradient(to bottom, rgba(0,178,255,0.7), transparent)",
-                animation: "scrollPulse 1.8s ease-in-out infinite",
-              }}
+            Scroll
+          </span>
+          {/* Flecha SVG con animación bounce */}
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 22 22"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ animation: "arrowBounce 1.6s ease-in-out infinite" }}
+          >
+            <path
+              d="M11 3 L11 19 M4 13 L11 20 L18 13"
+              stroke="#00B2FF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
-          </div>
-        )}
+          </svg>
+        </div>
       </div>
  
       <style>{`
@@ -489,6 +638,30 @@ export default function ScrollVideo() {
           0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
           50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
           100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+        }
+        @keyframes arrowBounce {
+          0%, 100% { transform: translateY(0);   opacity: 1;    }
+          50%       { transform: translateY(8px); opacity: 0.55; }
+        }
+        @keyframes heroTextIn {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes expandVertical {
+          from { transform: scaleY(0); opacity: 0; }
+          to   { transform: scaleY(1); opacity: 1; }
+        }
+        @keyframes shineSweep {
+          0%   { background-position: 150% 0; opacity: 0; }
+          10%  { opacity: 1; }
+          60%  { background-position: -50% 0; opacity: 1; }
+          80%  { opacity: 0; }
+          100% { background-position: -50% 0; opacity: 0; }
+        }
+        @keyframes textReveal {
+          0%   { background-position: 200% 0; color: transparent; }
+          60%  { background-position: -10% 0; color: rgba(242,242,242,0.55); }
+          100% { background-position: -10% 0; color: rgba(242,242,242,0.55); }
         }
       `}</style>
     </section>

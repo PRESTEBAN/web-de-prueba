@@ -1,0 +1,352 @@
+/* ── Animación fadeUp (secciones al entrar) ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fadeUp  { animation: fadeUp 0.8s ease both; }
+.delay1  { animation-delay: 0.1s; }
+.delay2  { animation-delay: 0.25s; }
+.delay3  { animation-delay: 0.4s; }
+
+/* ── Noise (textura de grano sobre toda la página) ── */
+.noise {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px;
+}
+
+/* ── Separador entre secciones ── */
+.hrAccent {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0;
+}
+
+/* ── Label de sección (ej: "// Servicios") ── */
+.sectionLabel {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.sectionLabel::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--blue);
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.4rem 3.5rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(13,13,13,0.8);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* Nav — links */
+.navLink {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(242,242,242,0.4);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--cyan);
+  transition: width 0.25s ease;
+}
+.navLink:hover        { color: var(--cyan); }
+.navLink:hover::after { width: 100%; }
+
+/* Nav — botón "Hablemos" */
+.navCta {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.4rem;
+  border: 1px solid var(--blue);
+  color: var(--cyan);
+  text-decoration: none;
+  background: transparent;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.navCta:hover {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 0 24px rgba(0,0,238,0.35);
+}
+
+/* ── Scroll-reveal para sección Servicios ── */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.revealDown {
+  opacity: 0;
+  transform: translateY(-40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.revealDown.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Al salir: sube y desaparece */
+.revealDown.exitUp {
+  opacity: 0;
+  transform: translateY(-40px);
+}
+
+.revealDownDelay1 { transition-delay: 0.1s; }
+.revealDownDelay2 { transition-delay: 0.25s; }
+.revealDownDelay3 { transition-delay: 0.4s; }
+.revealDownDelay4 { transition-delay: 0.15s; }
+.revealDownDelay5 { transition-delay: 0.3s; }
+.revealDownDelay6 { transition-delay: 0.45s; }
+.servicesSection {
+  background: var(--ink2);
+  padding: 8rem 4rem;
+  /* Rejilla de puntos muy sutil de fondo */
+  background-image:
+    radial-gradient(circle, rgba(0,178,255,0.06) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+/* Keyframes para las cards */
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0px);  }
+  50%       { transform: translateY(-10px); }
+}
+@keyframes neonPulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1;   }
+}
+@keyframes iconSpin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+@keyframes borderFlow {
+  0%   { background-position: 0% 50%;   }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%;   }
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  background: transparent;
+}
+
+/* Servicios — card flotante con neón */
+.serviceCard {
+  background: rgba(13,13,13,0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 3rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  border-radius: 16px;
+  border: 1px solid rgba(0,178,255,0.15);
+
+  /* Flotación individual — cada card con delay diferente via inline style */
+  animation: cardFloat 5s ease-in-out infinite;
+
+  /* Sombra neón base */
+  box-shadow:
+    0 0 0 1px rgba(0,178,255,0.08),
+    0 8px 32px rgba(0,0,0,0.5),
+    0 0 40px rgba(0,178,255,0.06);
+
+  transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.3s ease;
+}
+
+/* Línea de borde animada arriba */
+.serviceCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0,178,255,0.8) 30%,
+    rgba(0,80,255,0.9) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: borderFlow 3s linear infinite, neonPulse 3s ease-in-out infinite;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Resplandor interno radial */
+.serviceCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(0,178,255,0.08) 0%,
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: 16px;
+}
+
+.serviceCard:hover {
+  border-color: rgba(0,178,255,0.55);
+  box-shadow:
+    0 0 0 1px rgba(0,178,255,0.4),
+    0 12px 48px rgba(0,0,0,0.6),
+    0 0 60px rgba(0,178,255,0.2),
+    0 0 120px rgba(0,80,255,0.1);
+  animation-play-state: paused; /* Pausa el float al hacer hover */
+}
+.serviceCard:hover::after {
+  opacity: 1;
+}
+
+/* Servicios — badge de categoría */
+.tagBadge {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(0,178,255,0.9);
+  border: 1px solid rgba(0,178,255,0.3);
+  background: rgba(0,178,255,0.06);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 1.8rem;
+  box-shadow: 0 0 10px rgba(0,178,255,0.15);
+}
+
+/* Servicios — ícono */
+.serviceIcon {
+  width: 48px; height: 48px;
+  border: 1px solid rgba(0,178,255,0.35);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.4rem;
+  font-size: 1.3rem;
+  color: var(--cyan);
+  background: rgba(0,178,255,0.06);
+  box-shadow:
+    0 0 16px rgba(0,178,255,0.2),
+    inset 0 0 12px rgba(0,178,255,0.05);
+  transition: box-shadow 0.35s, border-color 0.35s, transform 0.35s;
+}
+.serviceCard:hover .serviceIcon {
+  border-color: rgba(0,178,255,0.7);
+  box-shadow:
+    0 0 28px rgba(0,178,255,0.5),
+    inset 0 0 16px rgba(0,178,255,0.1);
+  transform: scale(1.1) rotate(6deg);
+}
+
+/* ── Sección Stats ── */
+.statsSection {
+  background: var(--ink);
+  padding: 6rem 4rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(242,242,242,0.04);
+}
+
+/* Stats — card */
+.statCard {
+  background: var(--ink);
+  padding: 3rem 2.5rem;
+  text-align: center;
+  position: relative;
+  transition: background 0.3s;
+}
+.statCard::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 2px;
+  background: var(--blue);
+  transition: width 0.35s ease;
+}
+.statCard:hover        { background: rgba(0,0,238,0.04); }
+.statCard:hover::after { width: 40%; }
+
+/* ── Sección CTA final ── */
+.ctaSection {
+  background: var(--blue);
+  padding: 9rem 4rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* CTA — luz radial decorativa de fondo */
+.ctaGlow {
+  position: absolute;
+  top: -30%; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* CTA — botón de email */
+.ctaBtn {
+  display: inline-block;
+  padding: 1rem 3rem;
+  background: var(--ink);
+  color: var(--white);
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.ctaBtn:hover {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255,255,255,0.45);
+  box-shadow: 0 0 32px rgba(255,255,255,0.1);
+}

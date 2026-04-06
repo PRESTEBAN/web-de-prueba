@@ -1,9 +1,31 @@
+/* ── Fuentes ── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
+ 
+
 @import "tailwindcss";
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --blue:  #0000EE;
+  --cyan:  #00B2FF;
+  --ink:   #0D0D0D;
+  --ink2:  #111;
+  --white: #F2F2F2;
+  --line:  rgba(242,242,242,0.06);
 }
+
+html { scroll-behavior: smooth; }
+ 
+body { background: var(--ink); color: var(--white); overflow-x: hidden; }
+ 
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 3px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--blue); }
 
 @theme inline {
   --color-background: var(--background);

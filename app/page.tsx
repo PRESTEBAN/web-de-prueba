@@ -1,309 +1,393 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import ScrollVideo from "@/components/ScrollVideo";
+import styles from "./page.module.css";
+
+/* ── Datos de cada sección ── */
+const services = [
+  { num: "01", title: "Estrategia Visual",   desc: "Antes de diseñar, entendemos tu negocio. Cada decisión visual tiene un porqué comercial.", icon: "◈", tag: "Strategy"    },
+  { num: "02", title: "Desarrollo Front-end", desc: "De Figma a producción sin pérdida. React, Next.js, animaciones reales, rendimiento real.",  icon: "⬡", tag: "Engineering" },
+  { num: "03", title: "Optimización CRO",     desc: "Diseño basado en datos. Testeamos, iteramos y medimos cada cambio en conversión.",           icon: "◎", tag: "Growth"      },
+];
+
+const stats = [
+  { num: "98%",  label: "Retención de clientes"  },
+  { num: "+140", label: "Proyectos entregados"    },
+  { num: "3×",   label: "Aumento en conversión"  },
+  { num: "<24h", label: "Tiempo de respuesta"     },
+];
+
+const navItems = ["Trabajo", "Servicios", "Proceso", "Contacto"];
+
+/* ── Helpers de fuente (usados en estilos inline puntuales) ── */
+const bebas = { fontFamily: "'Bebas Neue', cursive" } as React.CSSProperties;
+const mono  = { fontFamily: "'Space Mono', monospace" } as React.CSSProperties;
+const dm    = { fontFamily: "'DM Sans', sans-serif" } as React.CSSProperties;
 
 export default function Home() {
+  const servicesSectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = servicesSectionRef.current;
+    if (!section) return;
+
+    const targets = section.querySelectorAll<HTMLElement>(`.${styles.revealDown}`);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Entra: baja suavemente
+            entry.target.classList.add(styles.visible);
+            entry.target.classList.remove(styles.exitUp);
+          } else {
+            // Sale: sube y desaparece
+            entry.target.classList.remove(styles.visible);
+            entry.target.classList.add(styles.exitUp);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+    );
+
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <main style={{ background: "#0D0D0D", minHeight: "100vh" }}>
+    <>
+      {/* Textura de grano sobre toda la página */}
+      <div className={styles.noise} aria-hidden="true" />
 
-      {/* Nav flotante */}
-      <nav style={{
-        position: "fixed",
-        top: 0, left: 0, right: 0,
-        zIndex: 100,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "1.4rem 3.5rem",
-        borderBottom: "1px solid rgba(242,242,242,0.05)",
-        background: "rgba(13,13,13,0.75)",
-        backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)",
-      }}>
-        <span style={{
-          fontFamily: "'Bebas Neue', cursive",
-          fontSize: "1.5rem",
-          letterSpacing: "0.1em",
-          color: "#F2F2F2",
-        }}>
-          STUDI<span style={{ color: "#00B2FF" }}>O</span>
-        </span>
+      <main style={{ background: "var(--ink)", minHeight: "100vh" }}>
 
-        <ul style={{ display: "flex", gap: "2.5rem", listStyle: "none", margin: 0, padding: 0 }}>
-          {["Trabajo", "Servicios", "Proceso", "Contacto"].map((item) => (
-            <li key={item}>
-              <a
-                href={`#${item.toLowerCase()}`}
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: "11px",
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  color: "rgba(242,242,242,0.45)",
-                  textDecoration: "none",
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = "#00B2FF"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(242,242,242,0.45)"; }}
-              >
-                {item}
-              </a>
-            </li>
-          ))}
-        </ul>
+        {/* ── Keyframes globales para el nav y el botón ── */}
+        <style>{`
+          @keyframes navLightSweep {
+            0%   { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translateX(400%) skewX(-15deg); opacity: 0; }
+          }
+          @keyframes btnLightLoop {
+            0%   { transform: translateX(-120%) skewX(-20deg); }
+            100% { transform: translateX(320%) skewX(-20deg); }
+          }
+          @keyframes btnPulseGlow {
+            0%, 100% { box-shadow: 0 4px 24px rgba(0,178,255,0.35), 0 0 0 1px rgba(0,178,255,0.3); }
+            50%       { box-shadow: 0 8px 40px rgba(0,178,255,0.65), 0 0 0 1px rgba(0,178,255,0.6); }
+          }
+        `}</style>
 
-        <a
-          href="#contacto"
-          style={{
-            fontFamily: "'Space Mono', monospace",
-            fontSize: "11px",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            padding: "0.6rem 1.4rem",
-            border: "1px solid #0000EE",
-            color: "#00B2FF",
-            textDecoration: "none",
-            background: "transparent",
-            transition: "background 0.2s, color 0.2s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#0000EE";
-            e.currentTarget.style.color = "#fff";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "#00B2FF";
-          }}
+        {/* ── NAV ── */}
+        <nav
+          className={styles.nav}
+          style={{ position: "relative", overflow: "hidden" }}
         >
-          Hablemos
-        </a>
-      </nav>
+          {/* Barrido de luz sobre el nav completo */}
+          <span
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "30%",
+              height: "100%",
+              background: "linear-gradient(90deg, transparent 0%, rgba(0,178,255,0.12) 50%, transparent 100%)",
+              animation: "navLightSweep 3.5s ease-in-out infinite",
+              pointerEvents: "none",
+              zIndex: 0,
+            }}
+          />
 
-      {/* Hero con scroll video */}
-      <ScrollVideo />
+          {/* Logo */}
+          <span style={{ ...bebas, fontSize: "1.5rem", letterSpacing: "0.1em", color: "var(--white)", position: "relative", zIndex: 1 }}>
+            STUDI<span style={{ color: "var(--cyan)" }}>O</span>
+          </span>
 
-      {/* === SECCIÓN: SERVICIOS === */}
-      <section id="servicios" style={{
-        background: "#111",
-        padding: "8rem 4rem",
-        borderTop: "1px solid rgba(242,242,242,0.05)",
-      }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <p style={{
-            fontFamily: "'Space Mono', monospace",
-            fontSize: "11px",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "#0000EE",
-            marginBottom: "1.5rem",
-          }}>
-            // Servicios
-          </p>
-          <h2 style={{
-            fontFamily: "'Bebas Neue', cursive",
-            fontSize: "clamp(3rem, 6vw, 5.5rem)",
-            lineHeight: 0.95,
-            color: "#F2F2F2",
-            marginBottom: "4rem",
-          }}>
-            Lo que hacemos<br />
-            <span style={{ color: "#4A5464" }}>mejor que nadie</span>
-          </h2>
+          {/* Links */}
+          <ul style={{ display: "flex", gap: "2.5rem", listStyle: "none", position: "relative", zIndex: 1 }}>
+            {navItems.map((item) => (
+              <li key={item}>
+                <a href={`#${item.toLowerCase()}`} className={styles.navLink}>{item}</a>
+              </li>
+            ))}
+          </ul>
 
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "1px",
-            background: "rgba(242,242,242,0.05)",
-          }}>
-            {[
-              { num: "01", title: "Estrategia Visual", desc: "Antes de diseñar, entendemos tu negocio. Cada decisión visual tiene un porqué comercial.", icon: "◈" },
-              { num: "02", title: "Desarrollo Front-end", desc: "De Figma a producción sin pérdida. React, Next.js, animaciones reales, rendimiento real.", icon: "⬡" },
-              { num: "03", title: "Optimización CRO", desc: "Diseño basado en datos. Testeamos, iteramos y medimos cada cambio en conversión.", icon: "◎" },
-            ].map((s) => (
-              <div
-                key={s.num}
-                style={{
-                  background: "#111",
-                  padding: "3rem 2.5rem",
-                  position: "relative",
-                  overflow: "hidden",
-                  cursor: "default",
-                  borderBottom: "2px solid transparent",
-                  transition: "background 0.3s, border-color 0.3s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(0,0,238,0.04)";
-                  e.currentTarget.style.borderBottomColor = "#0000EE";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#111";
-                  e.currentTarget.style.borderBottomColor = "transparent";
-                }}
-              >
-                <span style={{
-                  position: "absolute",
-                  top: "1.5rem",
-                  right: "1.5rem",
-                  fontFamily: "'Bebas Neue', cursive",
-                  fontSize: "4rem",
-                  color: "rgba(0,178,255,0.08)",
-                  lineHeight: 1,
-                }}>
-                  {s.num}
-                </span>
-                <div style={{
-                  width: "36px",
-                  height: "36px",
-                  border: "1px solid rgba(0,178,255,0.25)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: "1.5rem",
-                  fontSize: "1rem",
-                  color: "#00B2FF",
-                }}>
-                  {s.icon}
+          {/* Botón Hablemos — redondeado, elevado, con luz RGB azul en loop */}
+          <a
+            href="#contacto"
+            style={{
+              position: "relative",
+              zIndex: 1,
+              overflow: "hidden",
+              display: "inline-block",
+              padding: "10px 28px",
+              borderRadius: "999px",
+              background: "linear-gradient(135deg, #0033cc 0%, #00B2FF 100%)",
+              color: "#fff",
+              fontFamily: "'Space Mono', monospace",
+              fontSize: "11px",
+              fontWeight: 700,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              animation: "btnPulseGlow 2.4s ease-in-out infinite",
+              transition: "transform 0.2s",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-2px) scale(1.04)")}
+            onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0) scale(1)")}
+          >
+            {/* Barrido de luz RGB azul en loop sobre el botón */}
+            <span
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                top: "-20%",
+                left: 0,
+                width: "40%",
+                height: "140%",
+                background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%)",
+                animation: "btnLightLoop 1.8s linear infinite",
+                pointerEvents: "none",
+              }}
+            />
+            Hablemos
+          </a>
+        </nav>
+
+        {/* ── HERO ── */}
+        <ScrollVideo />
+
+        <hr className={styles.hrAccent} />
+
+        {/* ── SERVICIOS ── */}
+        <section id="servicios" className={styles.servicesSection} ref={servicesSectionRef}>
+          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+
+            {/* Label de sección */}
+            <p className={`${styles.sectionLabel} ${styles.revealDown} ${styles.revealDownDelay1}`}>Servicios</p>
+
+            {/* Título */}
+            <h2 className={`${styles.revealDown} ${styles.revealDownDelay2}`} style={{
+              ...bebas,
+              fontSize: "clamp(3rem, 6vw, 5.5rem)",
+              lineHeight: 0.95,
+              color: "var(--white)",
+              marginBottom: "4rem",
+            }}>
+              Lo que hacemos<br />
+              <span style={{ color: "rgba(242,242,242,0.18)", WebkitTextStroke: "1px rgba(242,242,242,0.2)" }}>
+                mejor que nadie
+              </span>
+            </h2>
+
+            {/* Grid de cards */}
+            <div className={styles.servicesGrid}>
+              {services.map((s, i) => (
+                <div
+                  key={s.num}
+                  className={`${styles.serviceCard} ${styles.revealDown} ${
+                    i === 0 ? styles.revealDownDelay4 :
+                    i === 1 ? styles.revealDownDelay5 :
+                              styles.revealDownDelay6
+                  }`}
+                  style={{
+                    animationName: "cardFloat",
+                    animationDuration: "5s",
+                    animationDelay: `${i * 1.5}s`,
+                    animationTimingFunction: "ease-in-out",
+                    animationFillMode: "none",
+                    animationIterationCount: "infinite",
+                  } as React.CSSProperties}
+                >
+                  {/* Número decorativo de fondo */}
+                  <span style={{
+                    position: "absolute", top: "1.5rem", right: "1.5rem",
+                    ...bebas, fontSize: "5rem",
+                    color: "rgba(0,178,255,0.05)", lineHeight: 1, userSelect: "none",
+                  }}>
+                    {s.num}
+                  </span>
+
+                  {/* Badge de categoría */}
+                  <span className={styles.tagBadge}>{s.tag}</span>
+
+                  {/* Ícono */}
+                  <div className={styles.serviceIcon}>{s.icon}</div>
+
+                  {/* Título del servicio */}
+                  <h3 style={{ ...bebas, fontSize: "1.7rem", letterSpacing: "0.03em", color: "var(--white)", marginBottom: "0.8rem" }}>
+                    {s.title}
+                  </h3>
+
+                  {/* Descripción */}
+                  <p style={{ ...dm, fontSize: "0.88rem", lineHeight: 1.75, color: "rgba(242,242,242,0.38)" }}>
+                    {s.desc}
+                  </p>
                 </div>
-                <h3 style={{
-                  fontFamily: "'Bebas Neue', cursive",
-                  fontSize: "1.6rem",
-                  letterSpacing: "0.03em",
-                  color: "#F2F2F2",
-                  marginBottom: "0.8rem",
-                }}>
-                  {s.title}
-                </h3>
-                <p style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "0.9rem",
-                  lineHeight: 1.7,
-                  color: "rgba(242,242,242,0.4)",
-                  margin: 0,
-                }}>
-                  {s.desc}
-                </p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <hr className={styles.hrAccent} />
+
+        {/* ── STATS ── */}
+        <section className={styles.statsSection}>
+          <div className={styles.statsGrid} style={{ maxWidth: "1200px", margin: "0 auto" }}>
+            {stats.map((s) => (
+              <div key={s.num} className={styles.statCard}>
+                {/* Número grande */}
+                <div style={{ ...bebas, fontSize: "3.8rem", color: "var(--blue)", lineHeight: 1, marginBottom: "0.5rem" }}>
+                  {s.num}
+                </div>
+                {/* Etiqueta */}
+                <div style={{ ...mono, fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(242,242,242,0.28)" }}>
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* === SECCIÓN: STATS === */}
-      <section style={{
-        background: "#0D0D0D",
-        padding: "6rem 4rem",
-        borderTop: "1px solid rgba(242,242,242,0.05)",
-      }}>
-        <div style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "2px",
-          background: "rgba(242,242,242,0.04)",
-        }}>
-          {[
-            { num: "98%", label: "Retención de clientes" },
-            { num: "+140", label: "Proyectos entregados" },
-            { num: "3×", label: "Aumento promedio en conversión" },
-            { num: "<24h", label: "Tiempo de respuesta" },
-          ].map((s) => (
-            <div key={s.num} style={{
-              background: "#0D0D0D",
-              padding: "3rem 2.5rem",
-              textAlign: "center",
-            }}>
-              <div style={{
-                fontFamily: "'Bebas Neue', cursive",
-                fontSize: "3.8rem",
-                color: "#0000EE",
-                lineHeight: 1,
-                marginBottom: "0.5rem",
-              }}>
-                {s.num}
-              </div>
-              <div style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: "10px",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                color: "rgba(242,242,242,0.3)",
-              }}>
-                {s.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+        <hr className={styles.hrAccent} />
 
-      {/* === SECCIÓN: CTA FINAL === */}
-      <section id="contacto" style={{
-        background: "#0000EE",
-        padding: "8rem 4rem",
-        textAlign: "center",
-      }}>
-        <p style={{
-          fontFamily: "'Space Mono', monospace",
-          fontSize: "11px",
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          color: "rgba(255,255,255,0.5)",
-          marginBottom: "1.5rem",
-        }}>
-          // Siguiente paso
-        </p>
-        <h2 style={{
-          fontFamily: "'Bebas Neue', cursive",
-          fontSize: "clamp(3.5rem, 7vw, 7rem)",
-          lineHeight: 0.93,
-          color: "#fff",
-          marginBottom: "1.5rem",
-        }}>
-          Construyamos algo<br />que no se olvide.
-        </h2>
-        <p style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: "1.1rem",
-          color: "rgba(255,255,255,0.6)",
-          maxWidth: "480px",
-          margin: "0 auto 3rem",
-          lineHeight: 1.6,
-        }}>
-          Primera consulta sin costo. Sin formularios infinitos. Solo una conversación.
-        </p>
-        <a
-          href="mailto:hola@studio.com"
+        {/* ── VIDEO SHOWCASE ── */}
+        <section
+          id="proceso"
           style={{
-            display: "inline-block",
-            padding: "1rem 3rem",
-            background: "#0D0D0D",
-            color: "#F2F2F2",
-            fontFamily: "'Space Mono', monospace",
-            fontSize: "12px",
-            fontWeight: 700,
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            textDecoration: "none",
-            borderRadius: "2px",
-            border: "1px solid #0D0D0D",
-            transition: "background 0.25s, color 0.25s, border-color 0.25s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "#fff";
-            e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "#0D0D0D";
-            e.currentTarget.style.color = "#F2F2F2";
-            e.currentTarget.style.borderColor = "#0D0D0D";
+            padding: "120px 60px",
+            maxWidth: "1200px",
+            margin: "0 auto",
           }}
         >
-          hola@studio.com →
-        </a>
-      </section>
+          {/* Label */}
+          <p className={`${styles.sectionLabel} ${styles.fadeUp}`}>Proceso</p>
 
-    </main>
+          {/* Título */}
+          <h2
+            className={`${styles.fadeUp} ${styles.delay1}`}
+            style={{
+              ...bebas,
+              fontSize: "clamp(3rem, 6vw, 5.5rem)",
+              lineHeight: 0.95,
+              color: "var(--white)",
+              marginBottom: "3rem",
+            }}
+          >
+            Así trabajamos<br />
+            <span style={{ color: "rgba(242,242,242,0.18)", WebkitTextStroke: "1px rgba(242,242,242,0.2)" }}>
+              de principio a fin
+            </span>
+          </h2>
+
+          {/* Contenedor del video */}
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              borderRadius: "4px",
+              overflow: "hidden",
+              border: "1px solid rgba(0,178,255,0.15)",
+              boxShadow: "0 0 80px rgba(0,178,255,0.07)",
+            }}
+          >
+            {/* Brillo decorativo superior */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "1px",
+                background: "linear-gradient(to right, transparent, rgba(0,178,255,0.6), transparent)",
+                zIndex: 2,
+              }}
+            />
+
+            <video
+              src="/showcase-video.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{
+                display: "block",
+                width: "100%",
+                height: "auto",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+        </section>
+
+        <hr className={styles.hrAccent} />
+
+        {/* ── CTA FINAL ── */}
+        <section id="contacto" className={styles.ctaSection} style={{ position: "relative", overflow: "hidden" }}>
+
+          {/* Video de fondo */}
+          <video
+            aria-hidden="true"
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              zIndex: 0,
+            }}
+          >
+            <source src="/fondo_final.mp4" type="video/mp4" />
+          </video>
+
+          {/* Overlay oscuro para legibilidad */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(5,5,20,0.62)",
+              zIndex: 1,
+            }}
+          />
+
+          {/* Contenido sobre el video */}
+          <div style={{ position: "relative", zIndex: 2 }}>
+
+            {/* Label */}
+            <p style={{ ...mono, fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginBottom: "1.5rem" }}>
+              // Siguiente paso
+            </p>
+
+            {/* Título */}
+            <h2 style={{ ...bebas, fontSize: "clamp(3.5rem, 7vw, 7rem)", lineHeight: 0.93, color: "#fff", marginBottom: "1.5rem" }}>
+              Construyamos algo<br />
+              <span style={{ opacity: 0.55 }}>que no se olvide.</span>
+            </h2>
+
+            {/* Subtítulo */}
+            <p style={{ ...dm, fontSize: "1.05rem", color: "rgba(255,255,255,0.55)", maxWidth: "420px", margin: "0 auto 3rem", lineHeight: 1.7, fontWeight: 300 }}>
+              Primera consulta sin costo. Sin formularios infinitos. Solo una conversación.
+            </p>
+
+            {/* Botón de contacto */}
+            <a href="mailto:hola@studio.com" className={styles.ctaBtn}>
+              hola@studio.com →
+            </a>
+
+          </div>
+
+        </section>
+
+      </main>
+    </>
   );
 }
